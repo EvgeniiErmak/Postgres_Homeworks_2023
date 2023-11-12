@@ -1,4 +1,5 @@
 # Local configuration file
+database.ini
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
