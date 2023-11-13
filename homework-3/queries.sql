@@ -11,13 +11,13 @@ WHERE customers.city = 'London'
 
 -- 2. Наименование продукта, количество товара, имя поставщика и его телефон
 --    для продуктов, которые не сняты с продажи, < 25, и в категориях Dairy Products и Condiments.
-SELECT products.product_name, products.units_in_stock, suppliers.contact_name, suppliers.phone
+SELECT product_name, units_in_stock, contact_name, phone
 FROM products
-JOIN suppliers ON products.supplier_id = suppliers.supplier_id
-WHERE products.discontinued = 0 -- предполагая, что 0 означает false
-  AND products.units_in_stock < 25
-  AND products.category_id IN (1, 2) -- ID категорий Dairy Products и Condiments
-ORDER BY products.units_in_stock ASC;
+JOIN categories USING(category_id)
+JOIN suppliers USING(supplier_id)
+WHERE category_name IN ('Dairy Products', 'Condiments') AND discontinued = 0
+AND units_in_stock < 25
+ORDER BY units_in_stock;
 
 -- 3. Список компаний заказчиков, не сделавших ни одного заказа.
 SELECT customers.company_name
@@ -28,7 +28,6 @@ ORDER BY customers.company_name;
 
 -- 4. Уникальные названия продуктов, которых заказано ровно 10 единиц
 --    (используется подзапрос).
-SELECT DISTINCT products.product_name
+SELECT product_name
 FROM products
-JOIN order_details ON products.product_id = order_details.product_id
-WHERE order_details.quantity = 10;
+WHERE product_id = ANY (SELECT product_id FROM order_details WHERE quantity = 10);
