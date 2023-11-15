@@ -2,6 +2,7 @@ import json
 import psycopg2
 from config import config
 
+
 def main():
     script_file = 'fill_db.sql'
     json_file = 'suppliers.json'
@@ -43,12 +44,14 @@ def main():
         if conn is not None:
             conn.close()
 
+
 def database_exists(params, db_name):
     """Проверяет, существует ли база данных с указанным именем."""
     with psycopg2.connect(**params) as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT 1 FROM pg_database WHERE datname = %s;", (db_name,))
             return cur.fetchone() is not None
+
 
 def create_database(params, db_name):
     """Создает новую базу данных."""
@@ -67,10 +70,12 @@ def create_database(params, db_name):
         if conn is not None:
             conn.close()
 
+
 def execute_sql_script(cur, script_file):
     """Выполняет скрипт из файла для заполнения БД данными."""
     with open(script_file, 'r') as script:
         cur.execute(script.read())
+
 
 def create_suppliers_table(cur):
     """Создает таблицу suppliers."""
@@ -88,10 +93,12 @@ def create_suppliers_table(cur):
         );
     """)
 
+
 def get_suppliers_data(json_file):
     """Извлекает данные о поставщиках из JSON-файла."""
     with open(json_file, 'r') as file:
         return json.load(file)
+
 
 def insert_suppliers_data(cur, suppliers):
     """Добавляет данные из suppliers в таблицу suppliers."""
@@ -110,6 +117,7 @@ def insert_suppliers_data(cur, suppliers):
             json.dumps(supplier['products'])
         ))
 
+
 def add_foreign_keys(cur):
     """Добавляет foreign key со ссылкой на supplier_id в таблицу products."""
     cur.execute("""
@@ -120,6 +128,7 @@ def add_foreign_keys(cur):
         REFERENCES suppliers(supplier_id);
     """)
     # При необходимости добавьте дополнительные действия по связыванию таблиц
+
 
 if __name__ == '__main__':
     main()
